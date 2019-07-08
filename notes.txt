@@ -1,0 +1,32 @@
+Tutorial: https://www.youtube.com/watch?v=3On5Z0gjf4U&list=PLblA84xge2_zwxh3XJqy6UVxS60YdusY8
+
+What is webpack? 
+A very configurable program that not only bundles-takes various different files (.png, .js, .css, etc) and bundles them into a smaller group of files, but it also manages dependencies-allowing files to be added where needed in your app.
+
+**************************
+***INSTALLING & RUNNING***
+**************************
+
+Step 1: Initialize npm (create a package.json file)
+    $ npm init -y
+Step 2: Add a .gitignore file and add node_modules to gitignore file.
+    node_modules
+Step 3: Install webpack and webpack-cli as development dependencies
+    $ npm i webpack webpack-cli
+Step 4: Add start script to the package.json file.
+    "scripts": {
+        "start": "webpack"
+    },
+Step 5: Create a default entrypoint (index.js) in .src folder
+    console.log('hello from webpack');
+Step 6: Create a dist folder in the root directory
+Step 7: In the index.html file, add a requires the main.js file in dist folder.
+    <script src="./dist/main.js"></script>
+Step 8: Add dist folder to .gitignore file
+    node_modules
+    dist
+
+******************************
+***IMPORT, EXPORTS, MODULES***
+******************************
+Step 9: 
