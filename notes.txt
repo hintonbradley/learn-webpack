@@ -3,10 +3,6 @@ Tutorial: https://www.youtube.com/watch?v=3On5Z0gjf4U&list=PLblA84xge2_zwxh3XJqy
 What is webpack? 
 A very configurable program that not only bundles-takes various different files (.png, .js, .css, etc) and bundles them into a smaller group of files, but it also manages dependencies-allowing files to be added where needed in your app.
 
-**************************
-***INSTALLING & RUNNING***
-**************************
-
 Step 1: Initialize npm (create a package.json file)
     $ npm init -y
 Step 2: Add a .gitignore file and add node_modules to gitignore file.
@@ -25,8 +21,43 @@ Step 7: In the index.html file, add a requires the main.js file in dist folder.
 Step 8: Add dist folder to .gitignore file
     node_modules
     dist
-
-******************************
-***IMPORT, EXPORTS, MODULES***
-******************************
-Step 9: 
+Step 9: Add all your dependencies to the index.js file so webpack can recognize and fetch from your app. (This is if we are not creating a separate config file - if no config file is created webpack automatically only looks in the index.js file for what to fetch.)
+    import { run } from "./app/app";
+    import { AlertService } from "./app/alert.service";
+    import { ComponentService } from "./app/component.service";
+    const alertService = new AlertService();
+    const componentService = new ComponentService();
+    run(alertService, componentService);
+Step 10: To configure webpack, create a webpack.config.js file in the root folder and require path module.
+    const path - require("path");
+Step 11: Add following code to webpack.config.js file.
+    // mode - default is production. if you want to run in development, you must add this key value (mode: development)
+    // entry - an entrypoint for webpack to access your application
+    // output - the file where the code should be outputted after webpack has completed compiling
+    // path - node module allowing the application to create a file in a specific path wherever it's hosted.
+    module.exports = {
+        mode: "development"
+        entry: "./src/index.js",
+        output: {
+            filename: 'main.js',
+            path: path.resolve(__dirname, "dist")
+        }
+    }
+Step 12: To write CSS, create a main.css file in your src folder, and write some styling.
+Step 13: Install your loader necessary for CSS
+    $ npm install --save-dev style-loader css-loader
+Step 14: Add a loader for you CSS in your webpack.config.js file.
+    module: {
+        rules: [
+            {
+                test: /\.css$/,
+                use: ["css-loader"]
+            }
+        ]
+    }
+Step 15: Make sure webpack knows about the css file by adding it to the index.js file.
+    ...
+    import { run } from "./app/app";
+    import "./main.css";
+    ...
+Step 16: Add style-loader to your webpack.config.js file in order to take the css file that has been translated to javascript and add it to the DOM. Note: style-loader must come before css-loader in the array since webpack imports elements in reverse order.
