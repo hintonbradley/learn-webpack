@@ -1,4 +1,5 @@
 const path = require("path");
+var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 // mode - default is production. if you want to run in development, you must add this key value (mode: development)
 // entry - an entrypoint for webpack to access your application
@@ -8,9 +9,12 @@ module.exports = {
     mode: "development",
     entry: "./src/index.js",
     output: {
-        filename: 'main.js',
+        filename: 'main.[contentHash].js',
         path: path.resolve(__dirname, "dist")
     },
+    plugins: [new HtmlWebpackPlugin({
+        template: "./src/template.html"
+    })],
     module: {
         rules: [
             {

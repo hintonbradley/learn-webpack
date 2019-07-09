@@ -61,3 +61,21 @@ Step 15: Make sure webpack knows about the css file by adding it to the index.js
     import "./main.css";
     ...
 Step 16: Add style-loader to your webpack.config.js file in order to take the css file that has been translated to javascript and add it to the DOM. Note: style-loader must come before css-loader in the array since webpack imports elements in reverse order.
+
+Step 17: In order to use caching to our advantage (via html) we need to download the html-webpack-plugin
+    $ npm install --save-dev html-webpack-plugin
+Step 18: Require the plugin in your webpack.config.js file.
+    const HtmlWebpackPlugin = require('html-webpack-plugin');
+Step 19: Add your configuration for this plugin to the config file.
+    plugins: [new HtmlWebpackPlugin()],
+Step 20: Add a template file in the src folder.
+
+Step 21: Copy and paste code from index.html from root folder into the new template.html file in src folder. Be sure to delete the <script src="./dist/main.js"></script> line as it's no longer needed - wepback will now rewrite this line each time a change is made to the main.js file.
+
+Step 22: In the config file, add configuration to the plugin so wepback recognizes which file to use as a template.
+
+Step 23: In the config file, update the output value:pair so that it adds the hash created by webpack to the html file.
+    ...
+    filename: 'main.[contentHash].js',
+    ...
+Step 24: 
