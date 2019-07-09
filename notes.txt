@@ -78,4 +78,89 @@ Step 23: In the config file, update the output value:pair so that it adds the ha
     ...
     filename: 'main.[contentHash].js',
     ...
-Step 24: 
+
+***********************
+***DEV & PROD CONFIG***
+***********************
+
+Step 24: Create two more config files in your root folder (webpack.dev.js and webpack.prod.js)
+Step 25: Copy webpack.config.js code into both new config files
+Step 26: Update the mode in each new file to match the name.
+    mode: "development",
+    &
+    mode: "production",
+Step 27: Change name of webpack.config.js to webpack.common.js
+Step 28: In webpack.common.js file, remove the following:
+    mode: "development",
+    &
+    output: {
+        filename: 'main.[contentHash].js',
+        path: path.resolve(__dirname, "dist")
+    },
+Step 29: In webpack.dev.js file, update the code so it looks like this (complete):
+    const path = require("path");
+    module.exports = {
+        mode: "development",
+        output: {
+            filename: 'main.js',
+            path: path.resolve(__dirname, "dist")
+        },
+    }
+Step 30: In webpack.prod.js file, update the code so it looks like this (complete):
+    const path = require("path");
+    module.exports = {
+        mode: "production",
+        output: {
+            filename: 'main.[contentHash].js',
+            path: path.resolve(__dirname, "dist")
+        }
+    }
+Step 31: In webpack.common.js file, keep all the code that is used by both prod and dev config files.
+    const path = require("path");
+    var HtmlWebpackPlugin = require('html-webpack-plugin');
+
+    // mode - default is production. if you want to run in development, you must add this key value (mode: development)
+    // entry - an entrypoint for webpack to access your application
+    // output - the file where the code should be outputted after webpack has completed compiling
+    // path - node module allowing the application to create a file in a specific path wherever it's hosted.
+    module.exports = {
+        entry: "./src/index.js",
+        plugins: [new HtmlWebpackPlugin({
+            template: "./src/template.html"
+        })],
+        module: {
+            rules: [
+                {
+                    test: /\.css$/,
+                    use: ["style-loader","css-loader"]
+                }
+            ]
+        }
+    }
+Step 32: In order to combine code from common and dev or prod, we need to install webpack-merge.
+    $ npm i --save-dev webpack-merge
+Step 33: Import common config file and webpack-merge into the dev and prod config files.
+    const common = require('./wepback.common');
+    const merge = require('webpack-merge');
+Step 34: In your dev and prod config files, set module.exports to be a function call of merge with common as a parameter and the original object as the second parameter.
+    module.exports = merge(common, {
+        mode: ...
+    });
+Step 35: To tell webpack which config files to use, update the scripts in your package.json file.
+    ...
+    "scripts": {
+        "start": "webpack --config webpack.dev.js",
+        "build": "webpack --config webpack.prod.js"
+    },
+    ...
+Step 36: Confirm dev is running correctly with npm start, and the dist/index.html file should only have main.js in the script. Additionally, that script in the dist folder should NOT be minified.
+    $ npm start
+Step 37: Confirm prod is running correctly with npm run build, and the dist/index.html file should have main[string].js in the script. Additionally, that script in the dist folder should be minified.
+
+Step 38: Set up a dev server by first installing webpack-dev-server.
+    $ npm i --save-dev webpack-dev-server
+Step 39: In your package.json file update the start script.
+    "start": "webpack-dev-server --config webpack.dev.js --open",
+Step 40: Confirm that a browser will open once you run npm start
+    $ npm start
+Step 41: 
