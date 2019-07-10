@@ -79,10 +79,9 @@ Step 23: In the config file, update the output value:pair so that it adds the ha
     filename: 'main.[contentHash].js',
     ...
 
-***********************
-***DEV & PROD CONFIG***
-***********************
-
+*************************
+*** DEV & PROD CONFIG ***
+*************************
 Step 24: Create two more config files in your root folder (webpack.dev.js and webpack.prod.js)
 Step 25: Copy webpack.config.js code into both new config files
 Step 26: Update the mode in each new file to match the name.
@@ -161,6 +160,44 @@ Step 38: Set up a dev server by first installing webpack-dev-server.
     $ npm i --save-dev webpack-dev-server
 Step 39: In your package.json file update the start script.
     "start": "webpack-dev-server --config webpack.dev.js --open",
-Step 40: Confirm that a browser will open once you run npm start
+Step 40: Confirm that a browser will open once you run npm start - changes should update the server instnatly.
     $ npm start
-Step 41: 
+
+***********
+** Loaders and assets **
+***********
+Step 41: To make sure assets are put in the dist folder when we build the app, we first need to move the assets folder in the src directory.
+Step 42: After you moved the assets folder make sure the link is correct in your template.html file. 
+    <img src="./assets/webpack.svg" />
+Step 43: Install html-loader in order to load your html file during builds.
+    $ npm i --save-dev html-loader
+Step 44: Add the new rule to your common.config file.
+    {
+        test: /\html$/,
+        use: ["html-loader"]
+    }
+Step 45: In order to the browser to go through and parse the image files, you'll need to install file-loader.
+    $ npm i --save-dev file-loader
+Step 46: Add your new file-loader rule in common.config file. Note: we're taking all image files (svg, png, jpg, etc) and using file-loader to bring them into our dist folder while naming them by each one's [name], and then adding a [hash], and finally using the file [ext]ention. Finally, we're putting them all in imgs folder in dist.
+    {
+        test:/\.(svg|png|jpg|gif)$/,
+        use: {
+            loader: "file-loader",
+            options: {
+                name: "[name].[hash].[ext]",
+                outputPath: "imgs"
+            }
+        }
+    }
+Step 47: Confirm the new imgs folder is in dist folder and that the image files are named correctly with the hash in the index.html file in dist. 
+
+****************************
+*** CLEAN WEBPACK PLUGIN ***
+****************************
+Step 48: In order to prevent multiple versions of files being created in our dist folder, we need to use clean webpack plugin. 
+    $ npm i clean-webpack-plugin --save-dev
+Step 49: In your prod.config file, import the dependency.
+    const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+Step 50: In your prod.config file, add an instance of it under 'plugins'.
+    plugins: [new CleanWebpackPlugin()]
+Step 51: 
