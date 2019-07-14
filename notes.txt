@@ -8,15 +8,16 @@ Step 1: Initialize npm (create a package.json file)
 Step 2: Add a .gitignore file and add node_modules to gitignore file.
     node_modules
 Step 3: Install webpack and webpack-cli as development dependencies
-    $ npm i webpack webpack-cli
+    $ npm i webpack webpack-cli --save-dev
 Step 4: Add start script to the package.json file.
     "scripts": {
         "start": "webpack"
     },
-Step 5: Create a default entrypoint (index.js) in .src folder
+    ...
+Step 5: Create a default entrypoint (main.js) in .src folder
     console.log('hello from webpack');
 Step 6: Create a dist folder in the root directory
-Step 7: In the index.html file, add a requires the main.js file in dist folder.
+Step 7: In the index.html file, add a script requiring the main.js file in dist folder.
     <script src="./dist/main.js"></script>
 Step 8: Add dist folder to .gitignore file
     node_modules
@@ -200,4 +201,106 @@ Step 49: In your prod.config file, import the dependency.
     const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 Step 50: In your prod.config file, add an instance of it under 'plugins'.
     plugins: [new CleanWebpackPlugin()]
-Step 51: 
+
+*******************************
+*** SEPARATING VENDOR FILES ***
+*******************************
+Step 51: Create a new vendor.js file in src folder, and write some code so you can test it.
+Step 52: In your common.config file to update your entry points. Instead of a string, change entry to an object.
+    entry: {
+        main: "./src/index.js",
+        vendor: "./src/vendor.js"
+    }...
+Step 53: Additionally, change your file names to [name] in the common.config file.
+    webpack.prod.js:
+        filename: '[name].[contentHash].bundle.js',
+
+    webpack.dev.js:
+        filename: '[name].bundle.js',
+Step 54: Start your server and confirm you now have two files (main and vendor) in your sources tab, and confirm both can be found as scripts in the html file. 
+Step 55: Install bootstrap and delete the cdn from your html file.
+    $ npm i --s bootstrap
+Step 56: Install sass-loader and node-sass
+    $ npm i --save-dev sass-loader node-sass
+Step 57: Create a new rule for SASS in config file.
+    {
+        test: /\.scss$/,
+        use: ["style-loader","css-loader","sass-loader"]
+    },
+Step 58: Add a new scss file in the src folder and import bootstrap scss.
+    @import "~bootstrap/scss/bootstrap";
+Step 60: In the vendor.js file, import the main.scss file.
+Step 61: Run build and confirm that bootstrap is indeed imported. 
+Step 62: Remove your css and put translate it into SASS.
+Step 63: To add bootstrap js, add a bootstrap component that requires js into your html.
+Step 64: In your vendor.js file, import bootstrap.
+    import 'bootstrap';
+Step 65: Install jquery and popper as required by Bootstrap.
+    $ npm install --save jquery popper.js.
+Step 66: Rebuild your app and test that the bootstrap component is working.
+
+************************
+*** EXTRACT & MINIFY ***
+************************
+
+Step 67: To extract your CSS so it can be loaded into the DOM before page ready, we need to install mini-css-extract-plugin
+    $ npm i --save-dev mini-css-extract-plugin
+Step 68: In your prod.config file, require the plugin, and add the configurization to the code.
+    const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+    ...
+    plugins: [ new MiniCssExtractPlugin({filename: "[name].[contentHash].css"}), new CleanWebpackPlugin() ]
+    ...
+Step 69: Instead of using style-loader in the common config file, we should instead use the new plugin to transform our css into a file that can be imported into our html in the head. So copy the scss code from common and place it into the dev config file since we don't need to import our css immediately in development. 
+    {
+        test: /\.scss$/,
+        use: ["style-loader","css-loader","sass-loader"]
+    },
+Step 70: In prod config add the code, but instead of style-loader, use MiniCssExtractPlugin.loader
+    module: {
+        rules: [
+            {
+                test: /\.scss$/,
+                use: ["MiniCssExtractPlugin.loader","css-loader","sass-loader"]
+            }
+        ]
+    }
+Step 71: In order to minify our CSS we first need to install optimize-css-assets-webpack-plugin.
+    $ npm i --save-dev optimize-css-assets-webpack-plugin
+Step 72: Since we only minimize css in production, import it into the prod.config file.
+    const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+Step 73: In the prod.config file, add a new property of optimization, and add your code for css minification.
+    optimization: {
+        minimizer: [ new OptimizeCssAssetsPlugin() ]
+    },
+Step 74: Since the minification property is overwritten, we need to add our javascript minifyer back in. In the prod.config file, require terser-webpack-plugin.
+    const TerserPlugin = require("terser-webpack-plugin");
+Step 75: Pass it in as a minimizer in prod.config.
+    optimization: {
+        minimizer: [ new OptimizeCssAssetsPlugin(), new TerserPlugin() ]
+    },
+
+**********************
+*** MINIFYING HTML ***
+**********************
+
+Step 76: In the common.config file, copy and remove the following lines:
+    plugins: [new HtmlWebpackPlugin({
+        template: "./src/template.html"
+    })],
+Step 77: Take the copied code and move it into the dev.config file-we don't need to minify our html in development environment.
+    plugins: [new HtmlWebpackPlugin({
+        template: "./src/template.html"
+    })],
+Step 78: And also require the plugin in dev.config file (remove the requirement from common).
+    var HtmlWebpackPlugin = require('html-webpack-plugin');
+Step 79: In prod.config file, require the plugin and add code for minimizing html.
+    var HtmlWebpackPlugin = require('html-webpack-plugin');
+    ...
+    minimizer: [ new OptimizeCssAssetsPlugin(), new TerserPlugin(), new HtmlWebpackPlugin({
+        template: "./src/template.html",
+        minify: {
+            removeAttributeQuotes: true,
+            collapseWhitespace: true,
+            removeComments: true
+    }})]
+End
